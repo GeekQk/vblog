@@ -19,7 +19,21 @@ func (i *UserServiceImpl) CreateUser(
 	ctx context.Context,
 	in *user.CreateUserRequest) (
 	*user.User, error) {
-	return nil, nil
+	//1.校验用户请求参数
+	if err := in.Validate(); err != nil {
+		return nil, err
+	}
+
+	//2.创建用户实例
+	u := user.NewUser(in)
+	//3.把对象持久化  存储表、映射关系
+	//比如createUser 4s的时候,请求没有返回,用户取消了请求,后端会因为请求中断而结束？
+	//怎么解决这个问题？ 使用WithContext 上下文
+	if err := i.db.WithContext(ctx).Create(u).Error; err != nil {
+		return nil, err
+	}
+	//4.返回用户实例
+	return u, nil
 }
 
 // 查询用户列表, 对象列表 [{}]
@@ -27,7 +41,25 @@ func (i *UserServiceImpl) QueryUser(
 	ctx context.Context,
 	in *user.QueryUserRequest) (
 	*user.UserSet, error) {
-	return nil, nil
+	//构建一下mysql查询条件 select * from user where id > 0 offset 0 limit 10
+	query := i.db.WithContext(ctx)
+	if in.Username != "" {
+		query = query.Where("username = ?", in.Username)
+	}
+	//获取总页数
+	userList := user.NewUserSet()
+	err := query.Model(&user.User{}).Count(&userList.Total).Error
+	if err != nil {
+		return nil, err
+	}
+	//分页查询 limit 10 offset 0
+	//limit 0,20
+	//limit 20,20
+	err = query.Limit(in.Limit()).Offset(in.OffSet()).Order("id asc").Find(&userList.Items).Error
+	if err != nil {
+		return nil, err
+	}
+	return userList, nil
 }
 
 // 查询用户详情, 通过Id查询,
@@ -35,7 +67,13 @@ func (i *UserServiceImpl) DescribeUser(
 	ctx context.Context,
 	in *user.DescribeUserRequest) (
 	*user.User, error) {
-	return nil, nil
+
+	u := user.NewUser(user.NewCreateUserRequest())
+	err := i.db.WithContext(ctx).Model(&user.User{}).Where(in.UserId).First(&u).Error
+	if err != nil {
+		return nil, err
+	}
+	return u, nil
 }
 
 func (i *UserServiceImpl) UpdateUser(
