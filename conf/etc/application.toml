@@ -1,0 +1,8 @@
+[mysql]
+host = "rm-bp13i71cqtb0f0b5nyo.mysql.rds.aliyuncs.com"
+port = 3306
+database = "vblog"
+username = "root"
+password = "qi395166"
+debug = false
+enable_trace = true
