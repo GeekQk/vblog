@@ -220,7 +220,7 @@ body不传数据
 ### 项目结构 
 
 ```sh
-go mod init github.com/GeekQk/vblog
+go mod init "github.com/GeekQk/vblog"
 ```
 
 + main.go: 入口文件
@@ -249,7 +249,7 @@ API和Interface的区别
 
 ### 用户管理模块开发
 
-1. 定义业务
+####  定义业务
 ```go
 // 面向对象
 // user.Service, 设计你这个模块提供的接口
@@ -273,7 +273,7 @@ type Service interface {
 }
 ```
 
-2. 业务实现
+#### 业务实现
 
 业务定义层(对业务的抽象), 由impl模块来完成具体的功能实现
 ```go
@@ -314,7 +314,299 @@ TDD的思想: 保证代码的质量
 
 ![](./docs/images/tdd.png)
 
-3. 怎么验证当前这个业务实现是不是正确的? 写单元测试(TDD)
+1. 怎么验证当前这个业务实现是不是正确的? 写单元测试(TDD)
+
+```go
+// 怎么引入被测试的对象
+func TestCreateUser(t *testing.T) {
+	// 单元测试异常怎么处理
+	u, err := i.CreateUser(ctx, nil)
+	// 直接报错中断单元流程并且失败
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// 自己进行期望对比，进行单元测试报错
+	if u == nil {
+		t.Fatal("user not created")
+	}
+
+	// 正常打印对象
+	t.Log(u)
+}
+```
+
+2. 业务控制器 如何获取 额外依赖(GORM DB对象)
+
+![](./docs/db_denpence.png)
+
+```go
+// 怎么实现user.Service接口?
+// 定义UserServiceImpl来实现接口
+type UserServiceImpl struct {
+	// 依赖了一个数据库操作的链接池对象
+	db *gorm.DB
+}
+```
+
+3. 为程序提供配置:
+```go
+package conf
+
+import (
+	"fmt"
+	"sync"
+
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
+)
+
+// 这里不采用直接暴露变量的方式, 比较好的方式 使用函数
+var config *Config
+
+// 这里就可以补充逻辑
+func C() *Config {
+	// sync.Lock
+	if config == nil {
+		// 给个默认值
+		config = &Config{}
+	}
+	return config
+}
+
+// 程序配置对象, 启动时 会读取配置， 并且为程序提供需要全局变量
+// 把配置对象做出全局变量(单列模式)
+type Config struct {
+	MySQL *MySQL
+}
+
+// db对象也是一个单列模式
+type MySQL struct {
+	Host     string `json:"host" yaml:"host" toml:"host" env:"DATASOURCE_HOST"`
+	Port     int    `json:"port" yaml:"port" toml:"port" env:"DATASOURCE_PORT"`
+	DB       string `json:"database" yaml:"database" toml:"database" env:"DATASOURCE_DB"`
+	Username string `json:"username" yaml:"username" toml:"username" env:"DATASOURCE_USERNAME"`
+	Password string `json:"password" yaml:"password" toml:"password" env:"DATASOURCE_PASSWORD"`
+	Debug    bool   `json:"debug" yaml:"debug" toml:"debug" env:"DATASOURCE_DEBUG"`
+
+	// 判断这个私有属性, 来判断是否返回已有的对象
+	db *gorm.DB
+	l  sync.Mutex
+}
+
+// dsn := "user:pass@tcp(127.0.0.1:3306)/dbname?charset=utf8mb4&parseTime=True&loc=Local"
+func (m *MySQL) DSN() string {
+	return fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+		m.Username,
+		m.Password,
+		m.Host,
+		m.Port,
+		m.DB,
+	)
+}
+
+// 通过配置就能通过一个DB 实例
+func (m *MySQL) GetDB() *gorm.DB {
+	m.l.Lock()
+	defer m.l.Unlock()
+
+	if m.db == nil {
+		db, err := gorm.Open(mysql.Open(m.DSN()), &gorm.Config{})
+		if err != nil {
+			panic(err)
+		}
+		m.db = db
+	}
+
+	return m.db
+}
+
+// 配置对象提供全局单列配置
+func (c *Config) DB() *gorm.DB {
+	return c.MySQL.GetDB()
+}
+```
+
+4. 使用配置提供DB对象完成控制期的依赖
+```go
+func NewUserServiceImpl() *UserServiceImpl {
+	return &UserServiceImpl{
+		// 获取全局的DB对象
+		// 前提: 配置对象准备完成
+		db: conf.C().DB(),
+	}
+}
+```
+
+5. 程序的校验
+
+使用validator来进行参数的校验 "github.com/go-playground/validator/v10"
+
+6. 使用单元测试验证实现的准确性:
+```go
+package impl_test
+
+import (
+	"context"
+	"testing"
+
+	"github.com/GeekQk/vblog/apps/user"
+	"github.com/GeekQk/vblog/apps/user/impl"
+)
+
+var (
+	i   user.Service
+	ctx = context.Background()
+)
+
+// 怎么引入被测试的对象
+func TestCreateUser(t *testing.T) {
+	// 使用构造函数创建请求对象
+	// user.CreateUserRequest{}
+	req := user.NewCreateUserRequest()
+	req.Username = "test111"
+	req.Password = "123456"
+	req.Role = user.ROLE_ADMIN
+
+	// 单元测试异常怎么处理
+	u, err := i.CreateUser(ctx, req)
+	// 直接报错中断单元流程并且失败
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// 自己进行期望对比，进行单元测试报错
+	if u == nil {
+		t.Fatal("user not created")
+	}
+
+	// 正常打印对象
+	t.Log(u)
+}
+
+func TestQueryUser(t *testing.T) {
+	req := user.NewQueryUserRequest()
+	ul, err := i.QueryUser(ctx, req)
+	// 直接报错中断单元流程并且失败
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(ul)
+}
+
+func TestDescribeUser(t *testing.T) {
+	req := user.NewDescribeUserRequest(6)
+	ul, err := i.DescribeUser(ctx, req)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(ul)
+}
+
+func init() {
+	// 加载被测试对象, i 就是User Service接口的具体实现对象
+	i = impl.NewUserServiceImpl()
+}
+```
+
+#### 用户密码的存储问题
+
+问题:
+1. 用户密码明文存储在数据库当中
+2. 哪些情况下需要把用户的密码查询出来, 进程内调用可以查询, 接口队伍暴露时 屏蔽
+
+方案: 
+
+[](./docs/password.drawio)
+
+1. HashPassword 方法内实现 hash
+```go
+// $2a$10$1MvkjvWOS0/Rf.cEKKxeie/Y7ADz9XZTq09Wd/bKwX/vUv0kdYJ4.
+// $2a$10$IyB.w1NVOrBmZ9WOsT6gEuruaynjse2CNmce9399yUErnufV10DX2
+// https://gitee.com/infraboard/go-course/blob/master/day09/go-hash.md#bcrypt
+func TestHashPassword(t *testing.T) {
+	req := user.NewCreateUserRequest()
+	req.Password = "123456"
+	req.HashPassword()
+	t.Log(req.Password)
+
+	t.Log(req.CheckPassword("1234561"))
+}
+```
 
 
+### 令牌管理模块开发
 
+#### 业务定义
+
+```go
+// Token Service接口定义
+type Service interface {
+	// 登录: 颁发令牌
+	IssueToken(context.Context, *IssueTokenRequest) (*Token, error)
+
+	// 退出: 撤销令牌
+	RevolkToken(context.Context, *RevolkTokenRequest) (*Token, error)
+
+	// 校验令牌
+	ValidateToken(context.Context, *ValidateTokenRequest) (*Token, error)
+}
+```
+
+#### 业务具体实现
+
+1. 如何处理模块间关联关系(面向接口编写)
+```go
+// 登录: 颁发令牌
+// 依赖User模块来检验 用户的密码是否正确
+func (i *TokenServiceImpl) IssueToken(
+	ctx context.Context,
+	in *token.IssueTokenRequest) (
+	*token.Token, error) {
+	// 1. 确认用户密码是否正确
+	req := user.NewQueryUserRequest()
+	req.Username = in.Username
+	us, err := i.user.QueryUser(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	if len(us.Items) == 0 {
+		return nil, fmt.Errorf("用户名或者密码错误")
+	}
+
+	// 校验密码是否正确
+	if err := us.Items[0].CheckPassword(in.Password); err != nil {
+		return nil, err
+	}
+
+	// 2. 正确的请求下 就颁发用户令牌
+
+	return nil, nil
+}
+```
+
+2. 颁发Token
+```go
+/*
+	{
+	          "user_id": "9",
+	          "username": "admin",
+	          "access_token": "cmh62ncbajf1m8ddlpa0",
+	          "access_token_expired_at": 7200,
+	          "refresh_token": "cmh62ncbajf1m8ddlpag",
+	          "refresh_token_expired_at": 28800,
+	          "created_at": 1705140573,
+	          "updated_at": 1705140573,
+	          "role": 1
+	}
+*/
+func TestIssueToken(t *testing.T) {
+	req := token.NewIssueTokenRequest("admin", "123456")
+	req.RemindMe = true
+	tk, err := i.IssueToken(ctx, req)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(tk)
+}
+```

@@ -45,6 +45,8 @@ func (i *UserServiceImpl) QueryUser(
 	query := i.db.WithContext(ctx)
 	if in.Username != "" {
 		query = query.Where("username = ?", in.Username)
+	} else {
+		query = query.Limit(in.Limit()).Offset(in.OffSet()).Order("id asc")
 	}
 	//获取总页数
 	userList := user.NewUserSet()
@@ -55,7 +57,7 @@ func (i *UserServiceImpl) QueryUser(
 	//分页查询 limit 10 offset 0
 	//limit 0,20
 	//limit 20,20
-	err = query.Limit(in.Limit()).Offset(in.OffSet()).Order("id asc").Find(&userList.Items).Error
+	err = query.Find(&userList.Items).Error
 	if err != nil {
 		return nil, err
 	}
