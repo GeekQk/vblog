@@ -6,6 +6,7 @@ require (
 	github.com/BurntSushi/toml v1.3.2
 	github.com/caarlos0/env/v6 v6.10.1
 	github.com/go-playground/validator v9.31.0+incompatible
+	golang.org/x/crypto v0.18.0
 	gorm.io/driver/mysql v1.5.2
 	gorm.io/gorm v1.25.5
 )

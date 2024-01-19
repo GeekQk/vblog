@@ -8,6 +8,9 @@ import (
 
 // 用户创建请求
 func NewUser(req *CreateUserRequest) *User {
+	// 密码加密
+	req.HashPassword()
+
 	return &User{
 		CreatedAt:         time.Now().Unix(),
 		UpdatedAt:         time.Now().Unix(),

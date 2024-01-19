@@ -13,7 +13,7 @@ import (
 var (
 	i          *impl.UserServiceImpl
 	ctx        = context.Background()
-	firstNames = []string{"Alic", "Bobs", "Charlies", "Davids", "Emmas", "Franks", "Graces", "Henrys", "Ivys", "Jacks"}
+	firstNames = []string{"Alica", "Bobsa", "Charliesa", "Davidsa", "Emmasa", "Franksa", "Graces", "Henrys", "Ivys", "Jacks"}
 	lastNames  = []string{"Smith", "Johnson", "Williams", "Jones", "Brown", "Davis", "Miller", "Wilson", "Moore", "Taylor"}
 )
 
@@ -62,6 +62,7 @@ func TestDescribeUser(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	t.Log(userSet.CheckPassword("123456"))
 	t.Log(userSet)
 }
 

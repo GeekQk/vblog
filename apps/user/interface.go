@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/go-playground/validator"
+	"golang.org/x/crypto/bcrypt"
 )
 
 var vali = validator.New()
@@ -49,6 +50,18 @@ type CreateUserRequest struct {
 	Password string            `json:"password" validate:"required" gorm:"column:password"`
 	Role     Role              `json:"role" gorm:"column:role"`
 	Label    map[string]string `json:"lable" gorm:"column:label;serializer:json"` // 序列map化成json字符串
+}
+
+func (c *CreateUserRequest) HashPassword() {
+	hp, err := bcrypt.GenerateFromPassword([]byte(c.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return
+	}
+	c.Password = string(hp)
+}
+
+func (c *CreateUserRequest) CheckPassword(pass string) error {
+	return bcrypt.CompareHashAndPassword([]byte(c.Password), []byte(pass))
 }
 
 // 引入validator, 验证参数
