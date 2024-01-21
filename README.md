@@ -610,3 +610,303 @@ func TestIssueToken(t *testing.T) {
 	t.Log(tk)
 }
 ```
+3. 撤销Token
+```go
+func TestRevokeToken(t *testing.T) {
+	req := token.NewRevokeTokenRequest(
+		"cmh62ncbajf1m8ddlpa0",
+		"cmh62ncbajf1m8ddlpag",
+	)
+	tk, err := i.RevokeToken(ctx, req)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(tk)
+}
+```
+
+4. 校验Token
+```go
+// refresh token expired 8666.516636 minutes
+/*
+{
+	"user_id": "9",
+	"username": "admin",
+	"access_token": "cmh63mkbajf1o5uh5cb0",
+	"access_token_expired_at": 604800,
+	"refresh_token": "cmh63mkbajf1o5uh5cbg",
+	"refresh_token_expired_at": 604800,
+	"created_at": 1705140698,
+	"updated_at": 1705140698,
+	"role": 0
+}
+*/
+func TestValidateToken(t *testing.T) {
+	req := token.NewValidateTokenRequest("cmh63mkbajf1o5uh5cb0")
+	tk, err := i.ValidateToken(ctx, req)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(tk)
+}
+```
+
+5. 业务异常
+
+[业务异常定义和处理](./exception/README.md)
+
+
+#### 业务API开发
+
+![](./docs/cookie.drawio)
+
+使用Gin做开发API的接口: 接口的状态管理(Cookie)
++ LogIn: 登录，令牌的颁发
+	+ 1. Token服务颁发Token
+	+ 2. 颁发完成后, 使用SetCookie 通知前端(浏览器), 把cookie设置到本地(前端)
++ LogOut: 登出, 令牌的销毁
+	+ 1. Token服务销毁Token
+	+ 2. 使用SetCookie 通知前端 从新设置Cookie为""
+
+
+1. 定义实现接口对象: TokenApiHandler:
+```go
+// 来实现对外提供 RESTful 接口
+type TokenApiHandler struct {
+	svc token.Service
+}
+
+// 如何为Handler添加路径, 如果把路由注册给 Http Server
+func (h *TokenApiHandler) Registry() {
+	// 每个业务模块 都需要往Gin Engine对象注册路由
+	r := gin.Default()
+	r.POST("/vblog/api/v1/tokens", h.Login)
+	r.DELETE("/vblog/api/v1/tokens", h.Logout)
+}
+
+// 登录
+func (h *TokenApiHandler) Login(ctx *gin.Context) {
+
+}
+
+// 退出
+func (h *TokenApiHandler) Logout(ctx *gin.Context) {
+
+}
+```
+
+2. 设计模块路由: 如何让每个模块的路由不冲突, 每个业务模块，当作一个路由分组: /vblog/api/v1/tokens
++ 前缀: vblog 是服务名称  /oder/ /bill/ /product/ /catalog/
++ 功能: api/ui 为了区分api 还是 ui(前端) api(后端)
++ 资源版本: v1/v2/v3
++ 业务模块名称: tokens, 或者资源名称
+
+```
+root path --> /vblog/api/v1
+module path --> /vblog/api/v1/tokens
+```
+
+```go
+// 如何为Handler添加路径, 如果把路由注册给 Http Server
+// 需要一个Root Router: path prefix: /vblog/api/v1
+func (h *TokenApiHandler) Registry(rr gin.IRouter) {
+	// 每个业务模块 都需要往Gin Engine对象注册路由
+	// r := gin.Default()
+	// rr := r.Group("/vblog/api/v1")
+
+	// 模块路径
+	// /vblog/api/v1/tokens
+	mr := rr.Group(token.AppName)
+	mr.POST("tokens", h.Login)
+	mr.DELETE("tokens", h.Logout)
+}
+```
+
+3. 接口如果携带请求参数:
++ URL Path: /tokens/xxxx/
++ URL Query String: ?token=xxx&a=1&b=2
++ Header
++ Body
+
+```go
+// Body 必须Json
+req := token.NewIssueTokenRequest("", "")
+if err := c.BindJSON(req); err != nil {
+	return
+}
+```
+
+4. 如果规范API请求的数据响应格式
+
+[数据响应格式统一](./response/README.md)
+
+
+5. 实现登录与退出
+```go
+// 登录
+func (h *TokenApiHandler) Login(c *gin.Context) {
+	// 1. 解析用户请求
+	// http 的请求可以放到哪里, 放body, bytes
+	// io.ReadAll(c.Request.Body)
+	// defer c.Request.Body.Close()
+	// json unmarshal json.Unmaral(body, o)
+
+	// Body 必须Json
+	req := token.NewIssueTokenRequest("", "")
+	if err := c.BindJSON(req); err != nil {
+		response.Failed(c, err)
+		return
+	}
+
+	// 2. 业务逻辑处理
+	tk, err := h.svc.IssueToken(c.Request.Context(), req)
+	if err != nil {
+		response.Failed(c, err)
+		return
+	}
+
+	// 2.1 set cookie
+	c.SetCookie(
+		token.TOKEN_COOKIE_KEY,
+		tk.AccessToken,
+		tk.AccessTokenExpiredAt,
+		"/",
+		conf.C().Application.Domain,
+		false,
+		true,
+	)
+
+	// 3. 返回处理的结果
+	response.Success(c, tk)
+}
+
+// 退出
+func (h *TokenApiHandler) Logout(c *gin.Context) {
+	// 1. 解析用户请求
+	// token为了安全 存放在Cookie获取自定义Header中
+	accessToken := token.GetAccessTokenFromHttp(c.Request)
+	req := token.NewRevokeTokenRequest(accessToken, c.Query("refresh_token"))
+	// 2. 业务逻辑处理
+	_, err := h.svc.RevokeToken(c.Request.Context(), req)
+	if err != nil {
+		response.Failed(c, err)
+		return
+	}
+
+	// 2.1 删除前端的cookie
+	c.SetCookie(
+		token.TOKEN_COOKIE_KEY,
+		"",
+		-1,
+		"/",
+		conf.C().Application.Domain,
+		false,
+		true,
+	)
+
+	// 3. 返回处理的结果
+	response.Success(c, "退出成功")
+}
+```
+
+
+### 组装业务(main)
+
+#### 组装
+
+```go
+package main
+
+import (
+	"github.com/gin-gonic/gin"
+	"github.com/GeekQk/vblog/apps/token/api"
+	token_impl "github.com/GeekQk/vblog/apps/token/impl"
+	user_impl "github.com/GeekQk/vblog/apps/user/impl"
+)
+
+func main() {
+	// user service impl
+	usvc := user_impl.NewUserServiceImpl()
+
+	// token service impl
+	tsvc := token_impl.NewTokenServiceImpl(usvc)
+
+	// api
+	TokenApiHander := api.NewTokenApiHandler(tsvc)
+
+	// Protocol
+	engine := gin.Default()
+
+	rr := engine.Group("/vblog/api/v1")
+	TokenApiHander.Registry(rr)
+
+	// 把Http协议服务器启动起来
+	if err := engine.Run(":8080"); err != nil {
+		panic(err)
+	}
+}
+```
+
+
+#### 启动
+
+```sh
+studio :: github.com/GeekQk/vblog ‹main*› » go run main.go 
+[GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
+
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:   export GIN_MODE=release
+ - using code:  gin.SetMode(gin.ReleaseMode)
+
+[GIN-debug] POST   /vblog/api/v1/tokens/     --> github.com/GeekQk/vblog/apps/token/api.(*TokenApiHandler).Login-fm (3 handlers)
+[GIN-debug] DELETE /vblog/api/v1/tokens/     --> github.com/GeekQk/vblog/apps/token/api.(*TokenApiHandler).Logout-fm (3 handlers)
+[GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
+Please check https://pkg.go.dev/github.com/gin-gonic/gin#readme-don-t-trust-all-proxies for details.
+[GIN-debug] Listening and serving HTTP on :8080
+```
+
+#### 测试
+
+使用 postman进行测试
+
+1. 登录
+```sh
+POST /vblog/api/v1/tokens HTTP/1.1
+Host: 127.0.0.1:8080
+Content-Type: application/json
+Cookie: token=cmloeukbajf7vckp4l7g
+Content-Length: 53
+
+{
+    "username": "admin",
+    "password": "123456"
+}
+```
+
+```json
+{
+    "user_id": "9",
+    "username": "admin",
+    "access_token": "cmloeukbajf7vckp4l7g",
+    "access_token_expired_at": 7200,
+    "refresh_token": "cmloeukbajf7vckp4l80",
+    "refresh_token_expired_at": 28800,
+    "created_at": 1705740154,
+    "updated_at": 1705740154,
+    "role": 1
+}
+```
+
+2. 退出
+```sh
+DELETE /vblog/api/v1/tokens?refresh_token=cmloi24bajf829v7u2l0 HTTP/1.1
+Cookie: token=cmloeukbajf7vckp4l7g
+Host: 127.0.0.1:8080
+
+```
+
+
+
+### v2版本
+
+[v2版本](./v2.md)
