@@ -28,19 +28,28 @@ func C() *Config {
 // 程序配置对象 启动时会加载配置文件 为程序提供全局变量
 // 把配置对象做成单例模式的全局变量，避免重复创建对象
 type Config struct {
-	MySql *MySql `json:"mysql" yaml:"mysql" toml:"mysql"`
+	MySql       *MySql       `json:"app" yaml:"app" toml:"app"`
+	Application *Application `json:"domain" yaml:"domain" toml:"domain"`
+}
+
+type Application struct {
+	Domain string `json:"domain" yaml:"domain" toml:"domain" env:"APP_DOMAIN"`
 }
 
 // 返回默认配置对象 MySql是二级指针 应该有默认值 防止空指针
 func DefaultConfig() *Config {
-	return &Config{MySql: &MySql{
-		Host:     "rm-bp13i71cqtb0f0b5nyo.mysql.rds.aliyuncs.com",
-		Port:     3306,
-		DB:       "vblog",
-		Username: "root",
-		Password: "qiKAI!!395166",
-		Debug:    true,
-	}}
+	return &Config{
+		Application: &Application{
+			Domain: "127.0.0.1",
+		},
+		MySql: &MySql{
+			Host:     "rm-bp13i71cqtb0f0b5nyo.mysql.rds.aliyuncs.com",
+			Port:     3306,
+			DB:       "vblog",
+			Username: "root",
+			Password: "qiKAI!!395166",
+			Debug:    true,
+		}}
 }
 
 // stringer实现

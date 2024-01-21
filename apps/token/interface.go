@@ -1,6 +1,12 @@
 package token
 
-import "context"
+import (
+	"context"
+	"fmt"
+	"net/http"
+	"net/url"
+	"strings"
+)
 
 const (
 	AppName = "token"
@@ -60,4 +66,26 @@ func NewRefreshTokenRequest(accessToken, refreshToken string) *RefreshTokenReque
 type RefreshTokenRequest struct {
 	AccessToken  string
 	RefreshToken string
+}
+
+// 先从header中获取token,如果header中没有则从cookie中获取
+func GetTokenFromHttpHeader(req *http.Request) string {
+	//自定义头, 获取token,标准头:Authorization
+	at := req.Header.Get(TOKEN_HEADER_KEY)
+	if at != "" {
+		hv := strings.Split(at, " ")
+		if len(hv) > 1 {
+			return hv[1]
+		}
+		return at
+	}
+	//直接读Cookie
+	ck, err := req.Cookie(TOKEN_COOKIE_KEY)
+	if err != nil {
+		fmt.Println(err)
+		return ""
+	}
+	val, _ := url.QueryUnescape(ck.Value)
+	return val
+
 }

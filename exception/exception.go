@@ -14,7 +14,7 @@ func NewApiException(code int, msg string) *APIExeption {
 }
 
 type APIExeption struct {
-	HttpCode int    `json:"http_code"`
+	HttpCode int    `json:"-"`
 	Code     int    `json:"code"`
 	Reason   string `json:"reason"`
 	Message  string `json:"message"`
@@ -27,6 +27,12 @@ func (e *APIExeption) Error() string {
 // 设计为链式调用 返回APIExeption
 func (e *APIExeption) WithMessage(msg string) *APIExeption {
 	e.Message = msg
+	return e
+}
+
+// 设计为链式调用 返回APIExeption http code
+func (e *APIExeption) WithHttpCode(code int) *APIExeption {
+	e.HttpCode = code
 	return e
 }
 
