@@ -24,6 +24,10 @@ type IssueTokenRequest struct {
 	RemindMe bool
 }
 
+func NewRevokeTokenRequest(accessToken, refreshToken string) *RevokeTokenRequest {
+	return &RevokeTokenRequest{AccessToken: accessToken, RefreshToken: refreshToken}
+}
+
 // 撤销令牌请求
 type RevokeTokenRequest struct {
 	//颁发的token 撤销

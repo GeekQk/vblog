@@ -15,7 +15,7 @@ var (
 )
 
 func TestIssueToken(t *testing.T) {
-	req := token.NewIssueTokenRequest("test", "123456")
+	req := token.NewIssueTokenRequest("test1", "123456")
 	req.RemindMe = true
 	tk, err := i.IssueToken(ctx, req)
 	if err != nil {
@@ -25,6 +25,12 @@ func TestIssueToken(t *testing.T) {
 }
 
 func TestRevokeToken(t *testing.T) {
+	req := token.NewRevokeTokenRequest("cmm79cdiika5l5iol6bg", "cmm79cdiika5l5iol6c0")
+	tk, err := i.RevokeToken(ctx, req)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(tk)
 
 }
 

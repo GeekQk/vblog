@@ -40,12 +40,29 @@ func (i *TokenServiceImpl) IssueToken(ctx context.Context, in *token.IssueTokenR
 
 // 退出: 销毁令牌
 func (i *TokenServiceImpl) RevokeToken(ctx context.Context, in *token.RevokeTokenRequest) (*token.Token, error) {
-	return nil, nil
+	//1. 查询token 在进行删除
+	tk, err := i.getToken(ctx, in.AccessToken)
+	if err != nil {
+		return nil, fmt.Errorf("token 不不存在")
+	}
+	//2.refresh token 确认
+	if !tk.CheckRefreshToken(in.RefreshToken) {
+		return nil, fmt.Errorf("refresh token 不正确")
+	}
+	//3. 删除token
+	err = i.db.WithContext(ctx).
+		Where("access_token = ?", tk.AccessToken).
+		Where("refresh_token = ?", tk.RefreshToken).
+		Delete(&token.Token{}).Error
+	if err != nil {
+		return nil, err
+	}
+	return tk, nil
 }
 
 // 验证: 校验令牌
 // 依赖用户模块的来进行校验
 func (i *TokenServiceImpl) ValidateToken(ctx context.Context, in *token.ValidateToken) (*token.Token, error) {
-
+	//1. 查询token
 	return nil, nil
 }

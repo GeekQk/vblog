@@ -59,6 +59,10 @@ func (t *Token) TableName() string {
 	return "tokens"
 }
 
+func (t *Token) CheckRefreshToken(refreshToken string) bool {
+	return t.RefreshToken == refreshToken
+}
+
 func (u *Token) String() string {
 	return pretty.ToJSON(u)
 }
