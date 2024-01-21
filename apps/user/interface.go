@@ -9,6 +9,9 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+var (
+	AppName = "users"
+)
 var vali = validator.New()
 
 // 面向对象
