@@ -30,6 +30,15 @@ func (h *TokenApiHandle) Registery(rr gin.IRouter) {
 }
 
 // 登录
+/*
+curl --location 'http://127.0.0.1:8090/vblog/api/v1/tokens' \
+--header 'Content-Type: application/json' \
+--header 'Cookie: token=cmmh1gdiikabp3g887tg' \
+--data '{
+    "username":"test1",
+    "password":"123456"
+}'
+*/
 func (h *TokenApiHandle) Login(c *gin.Context) {
 	//1.解析用户请求  http请求参数在body里面
 	//原始写法：
@@ -55,10 +64,18 @@ func (h *TokenApiHandle) Login(c *gin.Context) {
 }
 
 // 退出
+/*
+curl --location --request DELETE 'http://127.0.0.1:8090/vblog/api/v1/tokens?refresh_token=cmmh1gdiikabp3g887u0' \
+--header 'Content-Type: application/json' \
+--data '{
+    "refresh_token":"cmmh1gdiikabp3g887u0"
+}'
+*/
 func (h *TokenApiHandle) Logout(c *gin.Context) {
 	//1.解析用户请求  http请求参数在body里面
 	//为了安全 token存放在Header的Cookie里面
 	acessToken := token.GetTokenFromHttpHeader(c.Request)
+	//需要用GET方式 携带refresh_tokne参数
 	req := token.NewRevokeTokenRequest(acessToken, c.Query("refresh_token"))
 	//2.业务逻辑处理
 	_, err := h.svc.RevokeToken(c.Request.Context(), req)
