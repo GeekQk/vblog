@@ -7,6 +7,7 @@ import (
 	"github.com/GeekQk/vblog/apps/token"
 	"github.com/GeekQk/vblog/apps/token/impl"
 	ui "github.com/GeekQk/vblog/apps/user/impl"
+	"github.com/GeekQk/vblog/exception"
 )
 
 var (
@@ -15,7 +16,7 @@ var (
 )
 
 func TestIssueToken(t *testing.T) {
-	req := token.NewIssueTokenRequest("test1", "123456")
+	req := token.NewIssueTokenRequest("test11", "123456")
 	req.RemindMe = true
 	tk, err := i.IssueToken(ctx, req)
 	if err != nil {
@@ -35,6 +36,21 @@ func TestRevokeToken(t *testing.T) {
 }
 
 func TestValidateToken(t *testing.T) {
+	req := token.NewValidateTokenRequest("cmm7tntiika6ae1c0g30")
+	tk, err := i.ValidateToken(ctx, req)
+	// if e, ok := err.(*exception.APIExeption); ok {
+	// 	if e.Code == token.ErrRefreshTokenExpire.Code {
+	// 		t.Log(e.String())
+	// 	}
+	// }
+	//代码更优雅的实现方式
+	if ok := exception.IsException(err, *token.ErrRefreshTokenExpire); ok {
+		t.Log(err)
+	}
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(tk)
 }
 
 func init() {

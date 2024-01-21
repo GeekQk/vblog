@@ -63,6 +63,15 @@ func (t *Token) CheckRefreshToken(refreshToken string) bool {
 	return t.RefreshToken == refreshToken
 }
 
+// 校验Token是否过期
+// 1.access_token过期
+// 2.refresh_token过期
+func (t *Token) IsExpired() bool {
+	//过期时间 = refresh_token过期时间 + refresh_token过期时间
+	expireTime := time.Unix(t.CreatedAt, 0).Add(time.Duration(t.RefreshTokenExpiredAt) * time.Second)
+	return time.Now().After(expireTime)
+}
+
 func (u *Token) String() string {
 	return pretty.ToJSON(u)
 }

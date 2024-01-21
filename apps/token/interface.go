@@ -10,7 +10,10 @@ type Service interface {
 	RevokeToken(context.Context, *RevokeTokenRequest) (*Token, error)
 
 	//验证: 校验令牌
-	ValidateToken(context.Context, *ValidateToken) (*Token, error)
+	ValidateToken(context.Context, *ValidateTokenRequest) (*Token, error)
+
+	//刷新: 刷新令牌
+	RefreshToken(context.Context, *RefreshTokenRequest) (*Token, error)
 }
 
 func NewIssueTokenRequest(userName, password string) *IssueTokenRequest {
@@ -36,7 +39,21 @@ type RevokeTokenRequest struct {
 	RefreshToken string
 }
 
+func NewValidateTokenRequest(accessToken string) *ValidateTokenRequest {
+	return &ValidateTokenRequest{AccessToken: accessToken}
+}
+
 // 验证令牌请求
-type ValidateToken struct {
+type ValidateTokenRequest struct {
 	AccessToken string
+}
+
+func NewRefreshTokenRequest(accessToken, refreshToken string) *RefreshTokenRequest {
+	return &RefreshTokenRequest{AccessToken: accessToken, RefreshToken: refreshToken}
+}
+
+// 刷新令牌请求
+type RefreshTokenRequest struct {
+	AccessToken  string
+	RefreshToken string
 }

@@ -3,6 +3,7 @@ package impl
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/GeekQk/vblog/apps/token"
 	"github.com/GeekQk/vblog/apps/user"
@@ -62,7 +63,22 @@ func (i *TokenServiceImpl) RevokeToken(ctx context.Context, in *token.RevokeToke
 
 // 验证: 校验令牌
 // 依赖用户模块的来进行校验
-func (i *TokenServiceImpl) ValidateToken(ctx context.Context, in *token.ValidateToken) (*token.Token, error) {
+func (i *TokenServiceImpl) ValidateToken(ctx context.Context, in *token.ValidateTokenRequest) (*token.Token, error) {
+	//1. 查询token 在进行删除
+	tk, err := i.getToken(ctx, in.AccessToken)
+	if err != nil {
+		return nil, token.ErrTokenNotExist.WithMessagef("token not exist,token: %v", in.AccessToken)
+	}
+	//2. 判断token 是否过期
+	if tk.IsExpired() {
+		return nil, token.ErrRefreshTokenExpire.WithMessagef("token expire %v", time.Now().Unix())
+	}
+	return tk, nil
+}
+
+// 验证: 刷新令牌
+// 依赖用户模块的来进行校验
+func (i *TokenServiceImpl) RefreshToken(ctx context.Context, in *token.RefreshTokenRequest) (*token.Token, error) {
 	//1. 查询token
 	return nil, nil
 }
