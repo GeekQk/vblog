@@ -7,6 +7,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func NewTokenApiHandle(svc token.Service) *TokenApiHandle {
+	return &TokenApiHandle{svc: svc}
+}
+
 // 来实现对外的Restful接口
 type TokenApiHandle struct {
 	svc token.Service
@@ -60,6 +64,7 @@ func (h *TokenApiHandle) Logout(c *gin.Context) {
 	_, err := h.svc.RevokeToken(c.Request.Context(), req)
 	if err != nil {
 		response.Failed(c, err)
+		return
 	}
 	//3.删除Cookie
 	c.SetCookie(token.TOKEN_COOKIE_KEY, "", -1, "/", conf.C().Application.Domain, false, true)

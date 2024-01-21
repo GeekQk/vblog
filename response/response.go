@@ -9,7 +9,7 @@ import (
 
 // 响应成功 返回数据
 func Success(c *gin.Context, data any) {
-
+	c.JSON(http.StatusOK, data)
 }
 
 // 响应失败 返回Api Exception

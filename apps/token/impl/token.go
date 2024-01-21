@@ -46,7 +46,7 @@ func (i *TokenServiceImpl) RevokeToken(ctx context.Context, in *token.RevokeToke
 	if err != nil {
 		return nil, fmt.Errorf("token 不不存在")
 	}
-	//2.refresh token 确认
+	//2. 判断token 是否正确
 	if !tk.CheckRefreshToken(in.RefreshToken) {
 		return nil, fmt.Errorf("refresh token 不正确")
 	}

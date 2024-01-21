@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	AppName = "token"
+	AppName = "tokens"
 )
 
 type Service interface {
@@ -32,9 +32,9 @@ func NewIssueTokenRequest(userName, password string) *IssueTokenRequest {
 
 // 颁发令牌请求
 type IssueTokenRequest struct {
-	UserName string
-	Password string
-	RemindMe bool
+	UserName string `json:"username"`
+	Password string `json:"password"`
+	RemindMe bool   `json:"remind_me"` //有效期为1周
 }
 
 func NewRevokeTokenRequest(accessToken, refreshToken string) *RevokeTokenRequest {
