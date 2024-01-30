@@ -2,10 +2,16 @@ package blog
 
 import (
 	"context"
+
+	"github.com/go-playground/validator"
+)
+
+const (
+	AppName = "blog"
 )
 
 var (
-	AppName = "blog"
+	v = validator.New()
 )
 
 // Blog Service定义
@@ -26,14 +32,46 @@ type Service interface {
 	AuditBlog(context.Context, *AuditInfo) (*Blog, error)
 }
 
+func NewQueryBlogRequest() *QueryBlogRequest {
+	return &QueryBlogRequest{
+		PageSize:   20,
+		PageNumber: 1,
+	}
+}
+
 type QueryBlogRequest struct {
+	//分页大小，一页多少个
+	PageSize int
+	//当前页
+	PageNumber int
+}
+
+func (req *QueryBlogRequest) Limit() int {
+	return req.PageSize
+}
+func (req *QueryBlogRequest) Offset() int {
+	return req.PageSize * (req.PageNumber - 1)
+}
+
+func NewDescribeUserRequest(id string) *DescribeBlogRequest {
+	return &DescribeBlogRequest{
+		Id: id,
+	}
 }
 
 type DescribeBlogRequest struct {
+	Id string
 }
 
 type UpdateBlogRequest struct {
 }
 
+func NewDeleteBlogRequest(id string) *DeleteBlogRequest {
+	return &DeleteBlogRequest{
+		Id: id,
+	}
+}
+
 type DeleteBlogRequest struct {
+	Id string
 }

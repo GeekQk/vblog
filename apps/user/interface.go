@@ -97,9 +97,10 @@ func (req *QueryUserRequest) Limit() int {
 }
 
 // 0,20
-// 20,40
+// 20,20
+
 func (req *QueryUserRequest) OffSet() int {
-	return req.PageNumber * (req.PageSize - 1)
+	return req.PageSize * (req.PageNumber - 1)
 }
 
 func NewUserSet() *UserSet {

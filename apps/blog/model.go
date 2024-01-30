@@ -1,9 +1,22 @@
 package blog
 
+import (
+	"encoding/json"
+	"fmt"
+)
+
 // 系统生成
 // `id` int unsigned NOT NULL AUTO_INCREMENT COMMENT '文章的Id',
 // `created_at` int NOT NULL COMMENT '创建时间',
 // `updated_at` int NOT NULL COMMENT '更新时间',
+
+func NewBlog(req *CreateBlogRequest) *Blog {
+	return &Blog{
+		CreateBlogRequest:        req,
+		ChangedBlogStatusRequest: NewChangedBlogStatusRequest(), //默认草稿状态
+		AuditInfo:                NewAuditInfo(),                //默认未审核
+	}
+}
 
 type Blog struct {
 	// 用户Id
@@ -19,6 +32,22 @@ type Blog struct {
 	*ChangedBlogStatusRequest
 	// 审核
 	*AuditInfo
+}
+
+func (c *Blog) String() string {
+	sr, err := json.MarshalIndent(c, " ", "  ")
+	if err != nil {
+		return fmt.Sprintf("%s", err)
+	}
+	return string(sr)
+}
+
+func NewCreateBlogRequest() *CreateBlogRequest {
+	return &CreateBlogRequest{
+		//初始化map的两种方式
+		// Tags: map[string]string{},   //方式一
+		Tags: make(map[string]string), //方式二
+	}
 }
 
 // `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '文章标题',
@@ -42,6 +71,16 @@ type CreateBlogRequest struct {
 	Tags map[string]string `json:"tags" gorm:"column:tags;serializer:json"`
 }
 
+func (req *CreateBlogRequest) Validate() error {
+	return v.Struct(req)
+}
+
+func NewChangedBlogStatusRequest() *ChangedBlogStatusRequest {
+	return &ChangedBlogStatusRequest{
+		Status: STATUS_ORAFT, //默认时间为草稿
+	}
+}
+
 // 发布才能修改文章状态
 // `published_at` int NOT NULL COMMENT '发布时间',
 // `status` tinyint NOT NULL COMMENT '文章状态: 草稿/已发布',
@@ -50,6 +89,13 @@ type ChangedBlogStatusRequest struct {
 	PublishedAt int64 `json:"published_at" gorm:"column:published_at"`
 	// 文章状态: 草稿/已发布
 	Status Status `json:"status" gorm:"column:status"`
+}
+
+func NewAuditInfo() *AuditInfo {
+	//默认未审核
+	return &AuditInfo{
+		IsAuditPass: false,
+	}
 }
 
 // 审核相关字段
@@ -62,9 +108,23 @@ type AuditInfo struct {
 	IsAuditPass bool `json:"is_audit_pass" gorm:"column:is_audit_pass"`
 }
 
+func NewBlogSet() *BlogSet {
+	return &BlogSet{
+		Items: []*Blog{},
+	}
+}
+
 type BlogSet struct {
 	//总共多少个
 	Total int64 `json:"total"`
 	//数据清单
 	Items []*Blog `json:"items"`
+}
+
+func (c *BlogSet) String() string {
+	sr, err := json.MarshalIndent(c, " ", "  ")
+	if err != nil {
+		return fmt.Sprintf("%s", err)
+	}
+	return string(sr)
 }
