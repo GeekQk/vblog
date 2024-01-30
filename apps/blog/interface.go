@@ -3,6 +3,7 @@ package blog
 import (
 	"context"
 
+	"github.com/GeekQk/vblog/common"
 	"github.com/go-playground/validator"
 )
 
@@ -63,7 +64,21 @@ type DescribeBlogRequest struct {
 	Id string
 }
 
+func NewUpdateBlogRequest(id string) *UpdateBlogRequest {
+	return &UpdateBlogRequest{
+		Id:                id,
+		UpdateMode:        common.UPDATE_MODE_PUT,
+		CreateBlogRequest: NewCreateBlogRequest(),
+	}
+}
+
 type UpdateBlogRequest struct {
+	//更新ID
+	Id string `json:"id"`
+	//更新模式
+	UpdateMode common.UpdateMode `json:"update_mode"`
+	//更新的数据
+	*CreateBlogRequest
 }
 
 func NewDeleteBlogRequest(id string) *DeleteBlogRequest {
