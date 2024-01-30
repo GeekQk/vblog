@@ -75,7 +75,7 @@ func (i *blogServiceImpl) DescribeBlog(ctx context.Context, req *blog.DescribeBl
 // 2. 部分更新: (old obj) --patch--> new obj ---> save
 func (i *blogServiceImpl) UpdateBlog(ctx context.Context, req *blog.UpdateBlogRequest) (*blog.Blog, error) {
 	// 查询老的对象, 需要被更新的博客对象
-	ins, err := i.DescribeBlog(ctx, blog.NewDescribeUserRequest(req.Id))
+	ins, err := i.DescribeBlog(ctx, blog.NewDescribeBlogRequest(req.Id))
 	if err != nil {
 		return nil, err
 	}
@@ -117,7 +117,7 @@ func (i *blogServiceImpl) UpdateBlog(ctx context.Context, req *blog.UpdateBlogRe
 
 // 删除博客
 func (i *blogServiceImpl) DeleteBlog(ctx context.Context, req *blog.DeleteBlogRequest) (*blog.Blog, error) {
-	ins, err := i.DescribeBlog(ctx, blog.NewDescribeUserRequest(req.Id))
+	ins, err := i.DescribeBlog(ctx, blog.NewDescribeBlogRequest(req.Id))
 	if err != nil {
 		return nil, err
 	}

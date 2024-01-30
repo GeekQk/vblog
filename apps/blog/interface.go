@@ -2,8 +2,10 @@ package blog
 
 import (
 	"context"
+	"strconv"
 
 	"github.com/GeekQk/vblog/common"
+	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator"
 )
 
@@ -54,7 +56,7 @@ func (req *QueryBlogRequest) Offset() int {
 	return req.PageSize * (req.PageNumber - 1)
 }
 
-func NewDescribeUserRequest(id string) *DescribeBlogRequest {
+func NewDescribeBlogRequest(id string) *DescribeBlogRequest {
 	return &DescribeBlogRequest{
 		Id: id,
 	}
@@ -89,4 +91,19 @@ func NewDeleteBlogRequest(id string) *DeleteBlogRequest {
 
 type DeleteBlogRequest struct {
 	Id string
+}
+
+func NewQueryBlogRequestFromGin(c *gin.Context) *QueryBlogRequest {
+	req := NewQueryBlogRequest()
+	ps := c.Query("page_size") //返回字符串
+	//字符串统一转int
+	if ps != "" {
+		req.PageSize, _ = strconv.Atoi(ps)
+	}
+	pn := c.Query("page_number")
+	//字符串统一转int
+	if pn != "" {
+		req.PageNumber, _ = strconv.Atoi(pn)
+	}
+	return req
 }

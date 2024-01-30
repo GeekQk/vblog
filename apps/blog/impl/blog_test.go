@@ -32,7 +32,7 @@ func TestQueryBlogList(t *testing.T) {
 }
 
 func TestDetailBlogList(t *testing.T) {
-	req := blog.NewDescribeUserRequest("47")
+	req := blog.NewDescribeBlogRequest("47")
 	ins, err := impl.DescribeBlog(ctx, req)
 	if err != nil {
 		t.Fatal(err)
