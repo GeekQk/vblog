@@ -3,9 +3,14 @@ package api
 import (
 	"github.com/GeekQk/vblog/apps/token"
 	"github.com/GeekQk/vblog/conf"
+	"github.com/GeekQk/vblog/ioc"
 	"github.com/GeekQk/vblog/response"
 	"github.com/gin-gonic/gin"
 )
+
+func init() {
+	ioc.Api().Registery(token.AppName, &TokenApiHandle{})
+}
 
 func NewTokenApiHandle(svc token.Service) *TokenApiHandle {
 	return &TokenApiHandle{svc: svc}
@@ -14,6 +19,16 @@ func NewTokenApiHandle(svc token.Service) *TokenApiHandle {
 // 来实现对外的Restful接口
 type TokenApiHandle struct {
 	svc token.Service
+}
+
+func (t *TokenApiHandle) Init() error {
+	//从Controller空间中获取模块的具体实现 然后断言成满足接口
+	t.svc = ioc.Controller().Get(token.AppName).(token.Service)
+	return nil
+
+}
+func (t *TokenApiHandle) Destory() error {
+	return nil
 }
 
 // 如何处理路由 把路由注册给http Server
