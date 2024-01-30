@@ -6,9 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	// 通过import方法 完成注册
-	_ "github.com/GeekQk/vblog/apps/token/api"
-	_ "github.com/GeekQk/vblog/apps/token/impl"
-	_ "github.com/GeekQk/vblog/apps/user/impl"
+	_ "github.com/GeekQk/vblog/apps"
 )
 
 func main() {
@@ -33,7 +31,7 @@ func main() {
 
 	ioc.RegisteryGinApi(rr)
 	// 把Http协议服务器启动起来
-	if err := engine.Run(":8060"); err != nil {
+	if err := engine.Run(":8030"); err != nil {
 		panic(err)
 	}
 
