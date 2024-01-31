@@ -64,6 +64,9 @@ func (i *TokenServiceImpl) RevokeToken(ctx context.Context, in *token.RevokeToke
 // 验证: 校验令牌
 // 依赖用户模块的来进行校验
 func (i *TokenServiceImpl) ValidateToken(ctx context.Context, in *token.ValidateTokenRequest) (*token.Token, error) {
+	if in.AccessToken == "" {
+		return nil, token.ErrTokenNotExist.WithMessagef("token not exist")
+	}
 	//1. 查询token 在进行删除
 	tk, err := i.getToken(ctx, in.AccessToken)
 	if err != nil {

@@ -31,7 +31,7 @@ func main() {
 
 	ioc.RegisteryGinApi(rr)
 	// 把Http协议服务器启动起来
-	if err := engine.Run(":8030"); err != nil {
+	if err := engine.Run(":8010"); err != nil {
 		panic(err)
 	}
 
