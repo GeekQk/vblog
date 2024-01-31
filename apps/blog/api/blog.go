@@ -2,6 +2,7 @@ package api
 
 import (
 	"github.com/GeekQk/vblog/apps/blog"
+	"github.com/GeekQk/vblog/apps/token"
 	"github.com/GeekQk/vblog/common"
 	"github.com/GeekQk/vblog/response"
 	"github.com/gin-gonic/gin"
@@ -12,10 +13,10 @@ func (h *blogApiHandler) CreateBlog(c *gin.Context) {
 	// h.tk.Validate()
 	req := blog.NewCreateBlogRequest()
 
-	// // 后面请求如何获取 中间信息
-	// if v, ok := c.Get(token.TOKEN_MIDDLEWARE_KEY); ok {
-	// 	req.CreateBy = v.(*token.Token).UserName
-	// }
+	// 获取登录信息
+	if v, ok := c.Get(token.TOKEN_MIDDLEWARE_KEY); ok {
+		req.CreateBy = v.(*token.Token).UserName
+	}
 
 	if err := c.BindJSON(req); err != nil {
 		response.Failed(c, err)
