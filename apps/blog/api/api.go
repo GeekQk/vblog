@@ -2,6 +2,7 @@ package api
 
 import (
 	"github.com/GeekQk/vblog/apps/blog"
+	"github.com/GeekQk/vblog/apps/user"
 	"github.com/GeekQk/vblog/ioc"
 	"github.com/GeekQk/vblog/middleware"
 	"github.com/gin-gonic/gin"
@@ -42,6 +43,13 @@ func (i *blogApiHandler) Registery(rr gin.IRouter) {
 	r.GET("/", i.QueryBlog)
 	r.GET("/:id", i.DescribeBlog)
 
+	//中间件使用的两种方式
+	//方式一:影响单个路由, 直接把中间件函数注册到路由上
+	//r.GET("/", middleware.Auth, i.QueryBlog)
+	//方式二: 影响后面全部,在路由之前进行调用
+	//r.Use(middleware.Auth)
+	//r.GET("/", i.QueryBlog)
+
 	// 整个模块后面的请求 都需求认证
 	//Gin的中间件的实现是根据顺序来执行的, 只会影响后面的Action
 	r.Use(middleware.Auth)
@@ -50,5 +58,5 @@ func (i *blogApiHandler) Registery(rr gin.IRouter) {
 	r.POST("/", i.CreateBlog)
 	r.PATCH("/:id", i.PatchBlog)
 	r.PUT("/:id", i.UpdateBlog)
-	r.DELETE("/:id", i.DeleteBlog)
+	r.DELETE("/:id", middleware.Required(user.ROLE_MEMBER), i.DeleteBlog)
 }

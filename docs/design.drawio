@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="B_OWu13l6OYMhyhjqx5D" name="第 1 页">
-        <mxGraphModel dx="867" dy="647" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="814" dy="349" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -18,7 +18,7 @@
                         <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="18" value="1. 登录获取令牌&lt;br&gt;&lt;br&gt;user/pass" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="5" target="17">
+                <mxCell id="18" value="1. 登录获取令牌&lt;br&gt;&lt;br&gt;user/pass" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="5" target="17" edge="1">
                     <mxGeometry x="0.3333" y="-40" relative="1" as="geometry">
                         <mxPoint as="offset"/>
                     </mxGeometry>
@@ -41,10 +41,10 @@
                         <mxPoint y="12" as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="22" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.25;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="8" target="17">
+                <mxCell id="22" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.25;entryY=0;entryDx=0;entryDy=0;" parent="1" source="8" target="17" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="23" value="5. 确认Token是否合法" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="22">
+                <mxCell id="23" value="5. 确认Token是否合法" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="22" vertex="1" connectable="0">
                     <mxGeometry x="-0.2552" y="-2" relative="1" as="geometry">
                         <mxPoint as="offset"/>
                     </mxGeometry>
@@ -58,27 +58,41 @@
                         <mxPoint x="300" y="172.5" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="20" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.75;exitY=0;exitDx=0;exitDy=0;entryX=1;entryY=0.25;entryDx=0;entryDy=0;" edge="1" parent="1" source="17" target="5">
+                <mxCell id="20" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.75;exitY=0;exitDx=0;exitDy=0;entryX=1;entryY=0.25;entryDx=0;entryDy=0;" parent="1" source="17" target="5" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="21" value="3. 颁发访问令牌&lt;br&gt;&lt;br&gt;token" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="20">
+                <mxCell id="21" value="3. 颁发访问令牌&lt;br&gt;&lt;br&gt;token" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="20" vertex="1" connectable="0">
                     <mxGeometry x="-0.3559" y="-4" relative="1" as="geometry">
-                        <mxPoint x="31" y="12" as="offset"/>
+                        <mxPoint x="21" y="12" as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="24" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0;exitY=0.75;exitDx=0;exitDy=0;entryX=1;entryY=0.75;entryDx=0;entryDy=0;" edge="1" parent="1" source="17" target="4">
+                <mxCell id="24" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0;exitY=0.75;exitDx=0;exitDy=0;entryX=1;entryY=0.75;entryDx=0;entryDy=0;" parent="1" source="17" target="4" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="25" value="2. 确认用户身份" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="24">
+                <mxCell id="25" value="2. 确认用户身份" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="24" vertex="1" connectable="0">
                     <mxGeometry x="-0.0643" y="1" relative="1" as="geometry">
                         <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="17" value="Token管理&lt;br&gt;&lt;br&gt;用户身份令牌" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                <mxCell id="17" value="Token管理&lt;br&gt;&lt;br&gt;用户身份令牌" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="620" y="230" width="180" height="100" as="geometry"/>
                 </mxCell>
-                <mxCell id="19" value="token: 用户A" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                <mxCell id="19" value="token: 用户A" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
                     <mxGeometry x="670" y="360" width="110" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="26" value="&lt;meta charset=&quot;utf-8&quot;&gt;&lt;div style=&quot;color: rgb(171, 178, 191); background-color: rgb(40, 44, 52); font-family: Menlo, Monaco, &amp;quot;Courier New&amp;quot;, monospace; font-weight: normal; font-size: 12px; line-height: 18px;&quot;&gt;&lt;div&gt;&lt;span style=&quot;color: #c678dd;&quot;&gt;type&lt;/span&gt;&lt;span style=&quot;color: #abb2bf;&quot;&gt; &lt;/span&gt;&lt;span style=&quot;color: #e5c07b;&quot;&gt;TokenServiceImpl&lt;/span&gt;&lt;span style=&quot;color: #abb2bf;&quot;&gt; &lt;/span&gt;&lt;span style=&quot;color: #c678dd;&quot;&gt;struct&lt;/span&gt;&lt;span style=&quot;color: #abb2bf;&quot;&gt; {&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: #abb2bf;&quot;&gt;    &lt;/span&gt;&lt;span style=&quot;color: #7f848e;font-style: italic;&quot;&gt;// 依赖了一个数据库操作的链接池对象&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: #abb2bf;&quot;&gt;    db &lt;/span&gt;&lt;span style=&quot;color: #c678dd;&quot;&gt;*&lt;/span&gt;&lt;span style=&quot;color: #abb2bf;&quot;&gt;gorm.DB&lt;/span&gt;&lt;/div&gt;&lt;br&gt;&lt;div&gt;&lt;span style=&quot;color: #abb2bf;&quot;&gt;    &lt;/span&gt;&lt;span style=&quot;color: #7f848e;font-style: italic;&quot;&gt;// 依赖user.Service, 没有 UserServiceImpl 具体实现&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: #abb2bf;&quot;&gt;    &lt;/span&gt;&lt;span style=&quot;color: #7f848e;font-style: italic;&quot;&gt;// 依赖接口，不要接口的具体实现&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: #abb2bf;&quot;&gt;    user user.Service&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: #abb2bf;&quot;&gt;}&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;" style="text;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="427" y="440" width="380" height="170" as="geometry"/>
+                </mxCell>
+                <mxCell id="28" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="27" target="5" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="29" value="加载" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="28" vertex="1" connectable="0">
+                    <mxGeometry x="-0.3452" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="27" value="UI界面" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="20" y="120" width="90" height="100" as="geometry"/>
                 </mxCell>
             </root>
         </mxGraphModel>

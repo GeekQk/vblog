@@ -124,12 +124,12 @@ func (c *UserSet) String() string {
 	return string(sr)
 }
 
-func NewDescribeUserRequest(uid int) *DescribeUserRequest {
+func NewDescribeUserRequest(uid string) *DescribeUserRequest {
 	return &DescribeUserRequest{uid}
 }
 
 type DescribeUserRequest struct {
-	UserId int
+	UserId string
 }
 
 // 修改用户的字段

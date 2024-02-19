@@ -1,3 +1,4 @@
+-- Active: 1706265201597@@127.0.0.1@3306@vblog
 CREATE TABLE `users` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
   `created_at` int NOT NULL COMMENT '创建时间',

@@ -76,6 +76,13 @@ func (i *TokenServiceImpl) ValidateToken(ctx context.Context, in *token.Validate
 	if tk.IsExpired() {
 		return nil, token.ErrRefreshTokenExpire.WithMessagef("token expire %v", time.Now().Unix())
 	}
+	//3.补充用户角色
+	u, err := i.user.DescribeUser(ctx, user.NewDescribeUserRequest(tk.UserId))
+	if err != nil {
+		return nil, err
+	}
+
+	tk.Role = u.Role
 	return tk, nil
 }
 

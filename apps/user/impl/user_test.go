@@ -57,7 +57,7 @@ func TestQueryUser(t *testing.T) {
 
 // 根据用户Id查询用户
 func TestDescribeUser(t *testing.T) {
-	req := user.NewDescribeUserRequest(20)
+	req := user.NewDescribeUserRequest("20")
 	userSet, err := i.DescribeUser(ctx, req)
 	if err != nil {
 		t.Fatal(err)
