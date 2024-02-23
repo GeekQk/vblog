@@ -58,5 +58,5 @@ func (i *blogApiHandler) Registery(rr gin.IRouter) {
 	r.POST("/", i.CreateBlog)
 	r.PATCH("/:id", i.PatchBlog)
 	r.PUT("/:id", i.UpdateBlog)
-	r.DELETE("/:id", middleware.Required(user.ROLE_MEMBER), i.DeleteBlog)
+	r.DELETE("/:id", middleware.Required(user.ROLE_ADMIN, user.ROLE_MEMBER), i.DeleteBlog)
 }
