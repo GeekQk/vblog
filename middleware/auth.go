@@ -3,6 +3,7 @@ package middleware
 import (
 	"github.com/GeekQk/vblog/apps/token"
 	"github.com/GeekQk/vblog/apps/user"
+	"github.com/GeekQk/vblog/exception"
 	"github.com/GeekQk/vblog/ioc"
 	"github.com/GeekQk/vblog/response"
 	"github.com/gin-gonic/gin"
@@ -41,12 +42,12 @@ func Required(roles ...user.Role) gin.HandlerFunc {
 				}
 			}
 			if !hasPerm {
-				response.Failed(c, token.ErrPermissionDeny)
+				response.Failed(c, exception.ErrPermissionDeny.WithMessagef("允许访问的角色: %v", roles))
 				return
 			}
 
 		} else {
-			response.Failed(c, token.ErrUnauthorized)
+			response.Failed(c, exception.ErrUnauthorized)
 			return
 		}
 
