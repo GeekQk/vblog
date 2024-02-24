@@ -37,6 +37,10 @@ func (i *blogServiceImpl) QueryBlog(ctx context.Context, req *blog.QueryBlogRequ
 	// 1. 初始化查询对象
 	query := i.db.WithContext(ctx).Model(blog.Blog{})
 
+	//补充查询条件
+	if req.CreateBy != "" {
+		query = query.Where("create_by = ?", req.CreateBy)
+	}
 	// 查询总算
 	err := query.Count(&set.Total).Error
 	if err != nil {

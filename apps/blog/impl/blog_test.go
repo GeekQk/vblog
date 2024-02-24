@@ -9,12 +9,23 @@ import (
 
 func TestCreateBlog(t *testing.T) {
 	req := blog.NewCreateBlogRequest()
-	req.Title = "vblog Go语言web开发s"
+	req.Title = "vblog Go语言wesb开发s"
 	req.Author = "qk"
 	req.Content = "xxxx"
 	req.Summary = "xx"
+	req.CreateBy = "qk"
 	req.Tags["目录"] = "go"
 	ins, err := impl.CreateBlog(ctx, req)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(ins)
+}
+
+func TestQueryBlog(t *testing.T) {
+	req := blog.NewQueryBlogRequest()
+	req.CreateBy = "qk"
+	ins, err := impl.QueryBlog(ctx, req)
 	if err != nil {
 		t.Fatal(err)
 	}
