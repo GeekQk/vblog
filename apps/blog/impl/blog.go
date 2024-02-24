@@ -111,7 +111,12 @@ func (i *blogServiceImpl) UpdateBlog(ctx context.Context, req *blog.UpdateBlogRe
 
 	// 更新数据库
 	// UPDATE `blogs` SET `id`=48,`created_at`=1706344163,`updated_at`=1706344423,`title`='go语言全栈开发V2',`author`='oldyu',`content`='xxx',`summary`='xx',`tags`='{"目录":"Go语言"}' WHERE id = 48
-	err = i.db.WithContext(ctx).Model(&blog.Blog{}).Where("id = ?", ins.Id).Updates(ins).Error
+	stmt := i.db.WithContext(ctx).Model(&blog.Blog{}).Where("id = ?", ins.Id)
+	// 补充更新条件
+	if req.CreateBy != "" {
+		stmt = stmt.Where("create_by = ?", req.CreateBy)
+	}
+	err = stmt.Updates(ins).Error
 	if err != nil {
 		return nil, err
 	}

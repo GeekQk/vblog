@@ -45,6 +45,10 @@ func (h *blogApiHandler) PatchBlog(c *gin.Context) {
 		response.Failed(c, err)
 		return
 	}
+	// 后面请求如何获取 中间信息
+	if v, ok := c.Get(token.TOKEN_MIDDLEWARE_KEY); ok {
+		req.CreateBy = v.(*token.Token).UserName
+	}
 	ins, err := h.svc.UpdateBlog(c.Request.Context(), req)
 	if err != nil {
 		response.Failed(c, err)
@@ -62,6 +66,10 @@ func (h *blogApiHandler) UpdateBlog(c *gin.Context) {
 	if err := c.BindJSON(req.CreateBlogRequest); err != nil {
 		response.Failed(c, err)
 		return
+	}
+	// 后面请求如何获取 中间信息
+	if v, ok := c.Get(token.TOKEN_MIDDLEWARE_KEY); ok {
+		req.CreateBy = v.(*token.Token).UserName
 	}
 	ins, err := h.svc.UpdateBlog(c.Request.Context(), req)
 	if err != nil {
