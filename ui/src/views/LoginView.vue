@@ -17,8 +17,8 @@
           </template>
         </a-input-password>
       </a-form-item>
-      <a-form-item hide-label field="is_member">
-        <a-checkbox v-model="form.is_member"> 记住 </a-checkbox>
+      <a-form-item hide-label field="remind_me">
+        <a-checkbox v-model="form.remind_me"> 记住 </a-checkbox>
       </a-form-item>
       <a-form-item hide-label>
         <a-button type="primary" html-type="submit" style="width: 100%">登录</a-button>
@@ -29,18 +29,39 @@
 
 <script setup>
 import { ref } from 'vue'
+import { LOGIN } from '../api/token'
+import { state } from '../stores/app'
+import { useRouter } from 'vue-router';
+
+
+const router = useRouter()
 
 const form = ref({
   username: '',
   password: '',
-  is_member: false
+  remind_me: false
 })
 const handleSubmit = (data) => {
   // 调用后端api
   console.log(data)
+
+  if (!data.errors) {
+    // 只有当前端校验通过 才需要向后端提交数据
+    // axios 调用API请求
+    // 临时创建一个http 实例进行请求
+    LOGIN(form.value).then( (response) => {
+      // 把返回的Token对象保持到浏览器, 选用浏览器存储: localstorage
+      // 需要一个比较集中管理 应用状态的存储方案: app {token: '', isLogin}
+      // localstorage 本书不是响应式的, 有没有办法把localstorage 做成响应式
+      state.value.token = response
+
+      // 跳转到后台管理页面: BackendListBlog
+      // vue router库提供 router对象的获取方法
+      router.push({name: 'BackendListBlog'})
+    })
+  }
 }
 
-//
 const formRules = {
   username: [
     {

@@ -1,5 +1,6 @@
 <template>
   <div>Backend</div>
+  <RouterView></RouterView>
 </template>
 
 <script setup></script>

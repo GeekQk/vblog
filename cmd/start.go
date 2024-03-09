@@ -3,6 +3,7 @@ package cmd
 import (
 	"github.com/GeekQk/vblog/conf"
 	"github.com/GeekQk/vblog/ioc"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/cobra"
 )
@@ -20,6 +21,7 @@ var startCmd = &cobra.Command{
 
 		// Protocol
 		engine := gin.Default()
+		engine.Use(cors.Default())
 
 		rr := engine.Group("/vblog/api/v1")
 		ioc.RegisteryGinApi(rr)
