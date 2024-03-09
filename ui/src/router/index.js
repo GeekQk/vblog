@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import BackenLayout from '../views/backend/BackendLayout.vue'
 import FrontendLayout from '../views/frontend/FrontendLayout.vue'
+import { state } from '@/stores/app'
 
 const router = createRouter({
   // /backend/page
@@ -24,21 +25,28 @@ const router = createRouter({
           // /blogs 绝对路径
           path: 'blogs/list',
           name: 'BackendListBlog',
-          component: () => import('../views/backend/blog/ListView.vue'),
+          component: () => import('../views/backend/blog/ListView.vue')
         },
         {
           //   /backend/blogs/22  id=22
           path: 'blogs/detail/:id',
           name: 'BackendDetailBlog',
-          component: () => import('../views/backend/blog/DetailView.vue'),
+          component: () => import('../views/backend/blog/DetailView.vue')
         },
         {
           //   /backend/blogs/22  id=22
           path: 'blogs/edit/:id',
           name: 'BackendEditBlog',
-          component: () => import('../views/backend/blog/EditView.vue'),
+          component: () => import('../views/backend/blog/EditView.vue')
         },
-      ],
+        {
+          // blogs 相对路径 /backend/blogs
+          // /blogs 绝对路径
+          path: 'comments/list',
+          name: 'BackendListComment',
+          component: () => import('../views/backend/comment/ListView.vue')
+        }
+      ]
     },
     {
       path: '/frontend',
@@ -46,6 +54,17 @@ const router = createRouter({
       component: FrontendLayout
     }
   ]
+})
+
+router.beforeEach((to) => {
+  // 是不是访问后台页面
+  if (to.fullPath.startsWith('/backend/')) {
+    // 判断是否登录
+    if (!state.value.token) {
+      // 跳转去登录页面
+      return { name: 'LoginView' }
+    }
+  }
 })
 
 export default router

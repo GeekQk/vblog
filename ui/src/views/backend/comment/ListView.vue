@@ -1,5 +1,5 @@
 <template>
-  <div>文章详情</div>
+  <div>评论列表</div>
 </template>
 
 <script setup></script>

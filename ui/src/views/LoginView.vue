@@ -31,8 +31,7 @@
 import { ref } from 'vue'
 import { LOGIN } from '../api/token'
 import { state } from '../stores/app'
-import { useRouter } from 'vue-router';
-
+import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
@@ -49,7 +48,7 @@ const handleSubmit = (data) => {
     // 只有当前端校验通过 才需要向后端提交数据
     // axios 调用API请求
     // 临时创建一个http 实例进行请求
-    LOGIN(form.value).then( (response) => {
+    LOGIN(form.value).then((response) => {
       // 把返回的Token对象保持到浏览器, 选用浏览器存储: localstorage
       // 需要一个比较集中管理 应用状态的存储方案: app {token: '', isLogin}
       // localstorage 本书不是响应式的, 有没有办法把localstorage 做成响应式
@@ -57,7 +56,7 @@ const handleSubmit = (data) => {
 
       // 跳转到后台管理页面: BackendListBlog
       // vue router库提供 router对象的获取方法
-      router.push({name: 'BackendListBlog'})
+      router.push({ name: 'BackendListBlog' })
     })
   }
 }

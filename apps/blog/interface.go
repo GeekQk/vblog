@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	AppName = "blog"
+	AppName = "blogs"
 )
 
 var (
