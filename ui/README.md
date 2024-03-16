@@ -348,4 +348,35 @@ const data = reactive([
 
 定义 API 获取列表数据
 
+### 关键字搜索 
+
+1. BlogList(page_size,page_number,...)
+
+后端:
++ keywords 关键字查询条件
++ http 请求解析 该用户参数
++ BlogList接口 实现参数的处理
+
+签订:
++ request.keywords  <---> a-input
++ 用户回车时 触发 blog list API调用
+
+### 文章的创建与编辑
+
+独立使用一个页面: EditView.vue, 点击后跳转
+
+
++ 页头
++ 文本编辑和创建表单
+
+选一个支持markdown的编辑器 [md-editor-v3](https://www.npmjs.com/package/md-editor-v3)
+
+如何找到UI组件元素，并且调用该组件上的方法: Ref机制: https://cn.vuejs.org/guide/essentials/template-refs.html
+
+
+
+
+### 文章的删除
+
+
 ## 前台

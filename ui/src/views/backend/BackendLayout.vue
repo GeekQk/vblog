@@ -59,5 +59,7 @@ const handleMenuItemClick = (key) => {
 
 .page {
   padding: 6px;
+  overflow:auto;
+  height: calc(100vh - 60px);
 }
 </style>

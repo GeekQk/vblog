@@ -34,8 +34,10 @@ const router = createRouter({
           component: () => import('../views/backend/blog/DetailView.vue')
         },
         {
-          //   /backend/blogs/22  id=22
-          path: 'blogs/edit/:id',
+          //   /backend/edit?id=22
+          // url 路径参数 指定id时 表示该页面时编辑页面
+          // 如果没有指定id, 则为创建页面
+          path: 'blogs/edit',
           name: 'BackendEditBlog',
           component: () => import('../views/backend/blog/EditView.vue')
         },

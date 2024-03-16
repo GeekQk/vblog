@@ -8,10 +8,16 @@
     </div>
     <div class="op">
       <div>
-        <a-button type="primary">创建文章</a-button>
+        <a-button type="primary" @click="router.push({name: 'BackendEditBlog'})">创建文章</a-button>
       </div>
       <div>
-        <a-input :style="{ width: '320px' }" placeholder="请输入文字名称敲回车键搜索" allow-clear />
+        <a-input 
+        v-model="request.keywords" 
+        :style="{ width: '320px' }" 
+        placeholder="请输入文字名称敲回车键搜索"
+        allow-clear
+        @press-enter="ListBlog"
+        />
       </div>
     </div>
     <div>
@@ -54,6 +60,9 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { LIST_BLOG } from '../../../api/blog'
+import { useRouter } from 'vue-router';
+
+const router = useRouter()
 
 const isLoading = ref(false)
 const data = ref({items: [], total: 0});
@@ -75,7 +84,9 @@ onMounted(() => {
 // 声明一个响应式变量保持当前用户输入
 const request = ref({
   page_size: 10,
-  page_number: 1
+  page_number: 1,
+  create_by: '',
+  keywords: '',
 })
 // 处理页面大小变化
 const handlePageSizeChange = (pageSize) => {
