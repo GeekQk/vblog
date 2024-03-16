@@ -34,8 +34,8 @@
           <a-table-column title="操作" align="center">
             <template #cell="{ record }">
               <a-space>
-                <a-button @click="$modal.info({ title:'Name', content:record.title })">预览</a-button>
-                <a-button @click="$modal.info({ title:'Name', content:record.title })">编辑</a-button>
+                <a-button @click="router.push({name: 'BackendDetailBlog', params: {id: record.id}})">预览</a-button>
+                <a-button @click="router.push({name: 'BackendEditBlog', query: {id: record.id}})">编辑</a-button>
                 <a-button @click="$modal.info({ title:'Name', content:record.title })">删除</a-button>
               </a-space>
             </template>

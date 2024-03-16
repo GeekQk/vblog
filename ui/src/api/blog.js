@@ -7,6 +7,13 @@ export const LIST_BLOG = (params) =>
     params: params
   })
 
+export const GET_BLOG = (id, params) =>
+  client({
+    url: `/vblog/api/v1/blogs/${id}`,
+    method: 'get',
+    params: params
+  })
+
 export const CRATE_BLOG = (data) =>
   client({
     url: '/vblog/api/v1/blogs/',

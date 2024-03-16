@@ -30,11 +30,11 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { MdEditor } from 'md-editor-v3';
 import 'md-editor-v3/lib/style.css';
-import { CRATE_BLOG,UPDATE_BLOG } from '../../../api/blog'
+import { GET_BLOG, CRATE_BLOG,UPDATE_BLOG } from '../../../api/blog'
 import { state } from '../../../stores/app'
 import { Message } from '@arco-design/web-vue';
 
@@ -47,6 +47,8 @@ const id = router.currentRoute.value.query.id
 if (!id) {
   MODE.value = '创建文章'
 }
+
+
 
 // 创建文章
 const formRef = ref(null)
@@ -77,6 +79,13 @@ const handleSave = async () => {
     }
   }
 }
+
+onMounted( async () => {
+  if (id) {
+    const resp = await GET_BLOG(router.currentRoute.value.query.id)
+    form.value = resp
+  }
+})
 
 </script>
 
