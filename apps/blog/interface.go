@@ -49,6 +49,8 @@ type QueryBlogRequest struct {
 	PageNumber int
 	//创建人
 	CreateBy string
+	//关键字
+	Keywords string
 }
 
 func (req *QueryBlogRequest) Limit() int {
@@ -100,6 +102,8 @@ func NewQueryBlogRequestFromGin(c *gin.Context) *QueryBlogRequest {
 	ps := c.Query("page_size") //返回字符串
 	//增加创建人信息
 	req.CreateBy = c.Query("create_by")
+	//增加关键字
+	req.Keywords = c.Query("keywords")
 	//字符串统一转int
 	if ps != "" {
 		req.PageSize, _ = strconv.Atoi(ps)
