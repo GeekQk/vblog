@@ -374,9 +374,13 @@ const data = reactive([
 如何找到UI组件元素，并且调用该组件上的方法: Ref机制: https://cn.vuejs.org/guide/essentials/template-refs.html
 
 
-
-
 ### 文章的删除
 
++ 删除确认 PopConfirm组件
++ 刷新试图
 
-## 前台
+## 前台 (Homework)
+
+Home页面
++ 文章列表页面: https://arco.design/vue/component/list
++ 文章详情页: 后台已经完成

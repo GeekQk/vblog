@@ -36,7 +36,9 @@
               <a-space>
                 <a-button @click="router.push({name: 'BackendDetailBlog', params: {id: record.id}})">预览</a-button>
                 <a-button @click="router.push({name: 'BackendEditBlog', query: {id: record.id}})">编辑</a-button>
-                <a-button @click="$modal.info({ title:'Name', content:record.title })">删除</a-button>
+                <a-popconfirm @ok="handleDeleteBlog(record.id)" :content="`是否确认删除文章: ${record.title}`" type="error">
+                  <a-button>删除</a-button>
+                </a-popconfirm>
               </a-space>
             </template>
           </a-table-column>
@@ -59,7 +61,7 @@
 
 <script setup>
 import { onMounted, ref } from 'vue'
-import { LIST_BLOG } from '../../../api/blog'
+import { LIST_BLOG,DELETE_BLOG } from '../../../api/blog'
 import { useRouter } from 'vue-router';
 
 const router = useRouter()
@@ -95,6 +97,13 @@ const handlePageSizeChange = (pageSize) => {
 }
 const hanlePageNumberChange = (pageNumber) => {
   request.value.page_number = pageNumber
+  ListBlog()
+}
+
+// 文章的删除
+const handleDeleteBlog = async (blogId) => {
+  await DELETE_BLOG(blogId)
+  // 刷新页面
   ListBlog()
 }
 </script>

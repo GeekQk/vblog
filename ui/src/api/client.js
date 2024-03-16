@@ -16,10 +16,17 @@ instance.interceptors.response.use(
   },
   // 请求异常这么处理(!200)
   (err) => {
+    console.log(err)
     var msg = err.message
     if (err.response.data && err.response.data.message) {
       msg = err.response.data.message
+      // 针对特定的异常, 做特殊的逻辑处理
+      if (err.response.data.code === 401) {
+         window.location.assign('/login')
+      }
     }
+
+
     // 提示异常
     Message.error({
       content: msg,

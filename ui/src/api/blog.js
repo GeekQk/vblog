@@ -27,3 +27,9 @@ export const UPDATE_BLOG = (id, data) =>
     method: 'patch',
     data: data
   })
+
+export const DELETE_BLOG = (id) =>
+  client({
+    url: `/vblog/api/v1/blogs/${id}`,
+    method: 'delete',
+  })
