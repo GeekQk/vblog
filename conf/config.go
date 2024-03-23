@@ -43,11 +43,11 @@ func DefaultConfig() *Config {
 			Domain: "127.0.0.1",
 		},
 		MySql: &MySql{
-			Host:     "rm-bp13i71cqtb0f0b5nyo.mysql.rds.aliyuncs.com",
+			Host:     "47.95.22.131",
 			Port:     3306,
 			DB:       "vblog",
-			Username: "root",
-			Password: "qiKAI!!395166",
+			Username: "mysqld",
+			Password: "qiKAI!!39516600",
 			Debug:    true,
 		}}
 }

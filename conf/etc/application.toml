@@ -1,8 +1,8 @@
 [mysql]
-host = "rm-bp13i71cqtb0f0b5nyo.mysql.rds.aliyuncs.com"
+host = "47.95.22.131"
 port = 3306
 database = "vblog"
-username = "root"
-password = "qi395166"
+username = "mysqld"
+password = "qiKAI!!39516600"
 debug = false
 enable_trace = true
