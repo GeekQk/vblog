@@ -2,7 +2,7 @@ package service
 
 const HelloServiceName = "HelloService"
 
-type HelloService interface {
+type HelloServices interface {
 	Hello(request string, reply *string) error
 }
 

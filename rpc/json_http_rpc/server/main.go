@@ -6,10 +6,10 @@ import (
 	"net/rpc"
 	"net/rpc/jsonrpc"
 
-	"github.com/GeekQk/vblog/rpc/interface_limit_rcp/service"
+	"github.com/GeekQk/vblog/rpc/json_http_rpc/service"
 )
 
-var _ service.HelloService = (*HelloService)(nil)
+var _ service.HelloServices = (*HelloService)(nil)
 
 type HelloService struct{}
 
