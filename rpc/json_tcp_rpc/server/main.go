@@ -9,9 +9,9 @@ import (
 	"github.com/GeekQk/vblog/rpc/json_tcp_rpc/service"
 )
 
-var _ service.HelloService = (*service.HelloServiceImpl)(nil)
+var _ service.HelloService = (*HelloServiceImpl)(nil)
 
-type HelloService struct{}
+type HelloServiceImpl struct{}
 
 // Hello的逻辑 就是 将对方发送的消息前面添加一个Hello 然后返还给对方
 // 由于我们是一个rpc服务, 因此参数上面还是有约束：
@@ -20,7 +20,7 @@ type HelloService struct{}
 //	第二个参数是响应
 //
 // 可以类比Http handler
-func (p *HelloService) Hello(request string, reply *string) error {
+func (p *HelloServiceImpl) Hello(request string, reply *string) error {
 	*reply = "hello:" + request
 	return nil
 }
@@ -28,7 +28,7 @@ func main() {
 	// 把我们的对象注册成一个rpc的 receiver
 	// 其中rpc.Register函数调用会将对象类型中所有满足RPC规则的对象方法注册为RPC函数，
 	// 所有注册的方法会放在“HelloService”服务空间之下
-	rpc.RegisterName("HelloService", new(HelloService))
+	rpc.RegisterName("HelloService", new(HelloServiceImpl))
 
 	// 然后我们建立一个唯一的TCP链接，
 	listener, err := net.Listen("tcp", ":8301")
