@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package vblog.comment;
+option go_package="github.com/GeekQk/vblog/apps/comment";
+
+//以项目根目录为起始文件夹
+import "apps/comment/pb/model.proto";
+
+service Service {
+    rpc CreateComment(CreateCommentRequest) returns (Comment);
+}

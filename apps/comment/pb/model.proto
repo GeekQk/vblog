@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package vblog.comment;
+option go_package="github.com/GeekQk/vblog/apps/comment";
+
+
+message Comment {
+    // 评论Id
+    // @gotags: json:"id"
+    string id = 1;
+    // 10位时间戳
+    // @gotags: json:"create_at"
+    int64 create_at = 2;
+    // 评论具体定义
+    // @gotags: json:"spec" gorm:"embedded"
+    CreateCommentRequest spec = 3;
+}
+
+message CreateCommentRequest {
+    // 被评论文章Id
+    // @gotags: json:"blog_id"
+    string blog_id = 3;
+    // 评论的用户
+    // @gotags: json:"user_id"
+    string user_id = 4;
+    // 评论内容
+    // @gotags: json:"content"
+    string content = 5;
+}

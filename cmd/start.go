@@ -26,6 +26,9 @@ var startCmd = &cobra.Command{
 		rr := engine.Group("/vblog/api/v1")
 		ioc.RegisteryGinApi(rr)
 
+		//启动grpc服务
+		go conf.C().GrpcServer.Start()
+
 		// 把Http协议服务器启动起来
 		cobra.CheckErr(engine.Run(":8080"))
 	},

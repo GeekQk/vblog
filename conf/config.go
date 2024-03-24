@@ -3,8 +3,11 @@ package conf
 import (
 	"encoding/json"
 	"fmt"
+	"log"
+	"net"
 	"sync"
 
+	"google.golang.org/grpc"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -30,10 +33,40 @@ func C() *Config {
 type Config struct {
 	MySql       *MySql       `json:"app" yaml:"app" toml:"app"`
 	Application *Application `json:"domain" yaml:"domain" toml:"domain"`
+	GrpcServer  *GrpcServer  `json:"grpc" yaml:"grpc" toml:"grpc"`
 }
 
 type Application struct {
 	Domain string `json:"domain" yaml:"domain" toml:"domain" env:"APP_DOMAIN"`
+}
+
+type GrpcServer struct {
+	Host   string `json:"host" yaml:"host" toml:"host"`
+	Port   int    `json:"port" yaml:"port" toml:"port"`
+	server *grpc.Server
+}
+
+func (s *GrpcServer) GetServer() *grpc.Server {
+	if s.server == nil {
+		s.server = grpc.NewServer()
+	}
+	return s.server
+}
+
+func (s *GrpcServer) Address() string {
+	return fmt.Sprintf("%s:%d", s.Host, s.Port)
+}
+
+func (s *GrpcServer) Start() {
+	listener, err := net.Listen("tcp", s.Address())
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("grpc server start on ", s.Address())
+	err = s.GetServer().Serve(listener)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 // 返回默认配置对象 MySql是二级指针 应该有默认值 防止空指针
@@ -49,7 +82,12 @@ func DefaultConfig() *Config {
 			Username: "mysqld",
 			Password: "qiKAI!!39516600",
 			Debug:    true,
-		}}
+		},
+		GrpcServer: &GrpcServer{
+			Host: "127.0.0.1",
+			Port: 8301,
+		},
+	}
 }
 
 // stringer实现
